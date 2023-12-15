@@ -14,8 +14,6 @@ import (
 // Base64 represents value in base64 encoding
 type Base64 string
 
-type encodeFunc func(reflect.Value) ([]byte, error)
-
 func marshal(v interface{}) ([]byte, error) {
 	if v == nil {
 		return []byte{}, nil
@@ -74,7 +72,7 @@ func encodeValue(val reflect.Value) ([]byte, error) {
 			b = []byte(fmt.Sprintf("<string>%s</string>", buf.String()))
 		}
 	default:
-		return nil, fmt.Errorf("xmlrpc encode error: unsupported type")
+		return nil, fmt.Errorf("xmlrpc encode error: %s unsupported type", val.Kind().String())
 	}
 
 	if err != nil {

@@ -24,8 +24,8 @@ var (
 	// charset into UTF-8.
 	CharsetReader func(string, io.Reader) (io.Reader, error)
 
-	timeLayouts     = []string{iso8601, iso8601Z, iso8601Hyphen, iso8601HyphenZ}
-	invalidXmlError = errors.New("invalid xml")
+	timeLayouts   = []string{iso8601, iso8601Z, iso8601Hyphen, iso8601HyphenZ}
+	errInvalidXml = errors.New("invalid xml")
 )
 
 type TypeMismatchError string
@@ -94,7 +94,7 @@ func (dec *decoder) decodeValue(val reflect.Value) error {
 			if t.Name.Local == "value" {
 				return nil
 			} else {
-				return invalidXmlError
+				return errInvalidXml
 			}
 		}
 
@@ -174,7 +174,7 @@ func (dec *decoder) decodeValue(val reflect.Value) error {
 			switch t := tok.(type) {
 			case xml.StartElement:
 				if t.Name.Local != "member" {
-					return invalidXmlError
+					return errInvalidXml
 				}
 
 				tagName, fieldName, err := dec.readTag()
@@ -182,7 +182,7 @@ func (dec *decoder) decodeValue(val reflect.Value) error {
 					return err
 				}
 				if tagName != "name" {
-					return invalidXmlError
+					return errInvalidXml
 				}
 
 				var fv reflect.Value
@@ -245,7 +245,7 @@ func (dec *decoder) decodeValue(val reflect.Value) error {
 			case xml.StartElement:
 				var index int
 				if t.Name.Local != "data" {
-					return invalidXmlError
+					return errInvalidXml
 				}
 			DataLoop:
 				for {
@@ -256,7 +256,7 @@ func (dec *decoder) decodeValue(val reflect.Value) error {
 					switch tt := tok.(type) {
 					case xml.StartElement:
 						if tt.Name.Local != "value" {
-							return invalidXmlError
+							return errInvalidXml
 						}
 
 						if index < slice.Len() {
@@ -305,7 +305,7 @@ func (dec *decoder) decodeValue(val reflect.Value) error {
 		case xml.CharData:
 			data = []byte(t.Copy())
 		default:
-			return invalidXmlError
+			return errInvalidXml
 		}
 
 		switch typeName {
@@ -446,7 +446,7 @@ func (dec *decoder) readCharData() ([]byte, error) {
 	if t, ok := tok.(xml.CharData); ok {
 		return []byte(t.Copy()), nil
 	} else {
-		return nil, invalidXmlError
+		return nil, errInvalidXml
 	}
 }
 

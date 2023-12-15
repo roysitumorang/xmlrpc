@@ -18,8 +18,6 @@ type book struct {
 }
 
 type bookUnexported struct {
-	title  string
-	amount int
 }
 
 var unmarshalTests = []struct {
