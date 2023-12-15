@@ -3,7 +3,7 @@ package xmlrpc
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
+	"os"
 	"reflect"
 	"testing"
 	"time"
@@ -203,7 +203,7 @@ func Test_unmarshalExistingArray(t *testing.T) {
 }
 
 func Test_decodeNonUTF8Response(t *testing.T) {
-	data, err := ioutil.ReadFile("fixtures/cp1251.xml")
+	data, err := os.ReadFile("fixtures/cp1251.xml")
 	if err != nil {
 		t.Fatal(err)
 	}
